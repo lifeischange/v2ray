@@ -1,0 +1,37 @@
+vps部署好了之后。剩下的就是部署服务了
+这里我选的操作系统是cento。其他的也差不多
+在vps部署以后，系统会给出相应的ip和账户、密码等信息。远程登录我使用的是putty，当然也可以使用vps服务商提供的网页版的控制台。
+
+
+第一步 找到一键安装的服务地址
+输入以下命令：
+bash <(curl -sL https://raw.githubusercontent.com/hijkpw/scripts/master/centos_install_v2ray.sh)
+当控制台出现success之后，说明服务已经安装成功
+
+第二步 更改防火墙设置
+这一步我耽搁的时间最长，因为好多东西不清楚。第一次连接，显示服务无法启动。这个时候就要检查一下uuid了。这个id可以通过https://www.uuidgenerator.net/这个
+网站现在生成。
+这里一定要注意，生成的ID中间的符号“-”,在手机上需要选择英文符号。如果使用常规的常用服务里的“-”，就会显示无法启动服务
+这是碰到的第一个坑
+
+第二个坑 端口号
+
+这个一定要查看一下，服务端的网络端口号是不是已经打开了。当时我的情况就是可以启动服务了。但是测试网速就显示 handshake time out 握手失败。
+这里可以先通过
+service v2ray status 看看服务是否已经运行。如果运行了再试试
+可以通过这个网站测试一下，从国外能不能ping通网站
+https://www.yougetsignal.com/tools/open-ports/。如果能测通，说明端口号是开放的。那么我们就需要进行下一步了
+
+第三步 防火墙
+这里使用 firewall-cmd 这个命令 注意这里的-前面没有空格
+使用 firewall-cmd --list-port 查看允许被放行的端口号。如果没有之前设置的那个可以通过以下方式设置
+
+firewall-cmd --add-port=1234/tcp
+然后重启防火墙 firewall-cmd --reload
+最后一步 重启服务
+设置 开机启动 v2ray
+systemctl enable v2ray
+这里一定要重启以下 V2RAY
+systemctl restart v2ray
+
+最后大工搞成。
